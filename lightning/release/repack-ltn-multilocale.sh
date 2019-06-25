@@ -2,6 +2,12 @@
 
 set -e
 
+if [ -z "$1" ]
+then
+    echo "Usage: $0 (<urls>|<tb-version)"
+    exit 1
+fi
+
 VERSION=$1
 WGETOPTS="--read-timeout=20 -t 0 --waitretry=5 --timeout=15 --retry-connrefused"
 
@@ -14,6 +20,11 @@ else
             --prefix pub/thunderbird/releases/$VERSION/linux-i686 \
             | jq -r '.Contents[] | select(.Key | test("tar.bz2$")) | "https://ftp.mozilla.org/" + .Key')
     #URLS=$(cat aaa.json | jq -r '.Contents[] | select(.Key | test("tar.bz2$")) | "https://ftp.mozilla.org/" + .Key')
+    if [ -z "$URLS" ]
+    then
+        echo "Could not find version $VERSION"
+        exit 1
+    fi
 fi
 
 
